@@ -1,0 +1,2 @@
+# ScriptSerialization
+Inspector通用序列化自定义类
