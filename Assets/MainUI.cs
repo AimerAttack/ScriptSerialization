@@ -11,7 +11,7 @@ namespace DefaultNamespace
     {
         public class MainUIHolder : UIHolderInfo
         {
-            public List<GameObject> objs;
+            public List<Image> objs;
             public List<C2> c1;
         }
 

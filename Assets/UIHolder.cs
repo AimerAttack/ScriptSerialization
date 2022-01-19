@@ -140,8 +140,8 @@ public class ClassField
     [Required,ChildGameObjectsOnly,ShowIf("$ConditionObj"),LabelText("$Name")]
     public GameObject obj;
     
-    [ValidateInput("ComponentValid")]
-    [Required,ChildGameObjectsOnly,ShowIf("$ConditionComponent"),LabelText("$GetName")]
+    [ValidateInput("ComponentValid","$ComponentStr")]
+    [Required("$ComponentStr"),ChildGameObjectsOnly,ShowIf("$ConditionComponent"),LabelText("$GetName")]
     public Component component;
     
     [ShowIf("$ConditionBool"),LabelText("$Name")]
@@ -171,6 +171,13 @@ public class ClassField
     public List<ClassData> classes;
     #endregion
 
+    string ComponentStr()
+    {
+        var typeArr = ClassType.Split('.');
+        var type = typeArr[typeArr.Length - 1];
+        return $"{type} is required";
+    }
+    
     void Add()
     {
         var field = new ClassField();

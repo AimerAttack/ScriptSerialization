@@ -171,21 +171,34 @@ MonoBehaviour:
     ClassName: DefaultNamespace.MainUI+MainUIHolder
     fields:
     - Name: objs
-      ClassType: System.Collections.Generic.List`1[UnityEngine.GameObject]
+      ClassType: System.Collections.Generic.List`1[UnityEngine.UI.Image]
       val: 
       obj: {fileID: 0}
       component: {fileID: 0}
       boolVal: 0
       colorVal: {r: 0, g: 0, b: 0, a: 0}
       ListType: TYPE_LIST
-      ListItemType: UnityEngine.GameObject
+      ListItemType: UnityEngine.UI.Image
       needUnityFields: 1
       unityFields:
       - Name: 0
-        ClassType: UnityEngine.GameObject
+        ClassType: UnityEngine.UI.Image
         val: 
-        obj: {fileID: 4818069389670666036}
-        component: {fileID: 0}
+        obj: {fileID: 0}
+        component: {fileID: 4323544468942901320}
+        boolVal: 0
+        colorVal: {r: 0, g: 0, b: 0, a: 0}
+        ListType: TYPE_NORMAL
+        ListItemType: 
+        needUnityFields: 0
+        unityFields: []
+        needClasses: 0
+        classes: []
+      - Name: 1
+        ClassType: UnityEngine.UI.Image
+        val: 
+        obj: {fileID: 0}
+        component: {fileID: 4708660646340731384}
         boolVal: 0
         colorVal: {r: 0, g: 0, b: 0, a: 0}
         ListType: TYPE_NORMAL
@@ -208,10 +221,23 @@ MonoBehaviour:
       needUnityFields: 0
       unityFields:
       - Name: 0
-        ClassType: UnityEngine.GameObject
+        ClassType: UnityEngine.UI.Image
         val: 
-        obj: {fileID: 4818069389670666036}
-        component: {fileID: 0}
+        obj: {fileID: 0}
+        component: {fileID: 4708660646340731384}
+        boolVal: 0
+        colorVal: {r: 0, g: 0, b: 0, a: 0}
+        ListType: TYPE_NORMAL
+        ListItemType: 
+        needUnityFields: 0
+        unityFields: []
+        needClasses: 0
+        classes: []
+      - Name: 1
+        ClassType: UnityEngine.UI.Image
+        val: 
+        obj: {fileID: 0}
+        component: {fileID: 4323544468942901320}
         boolVal: 0
         colorVal: {r: 0, g: 0, b: 0, a: 0}
         ListType: TYPE_NORMAL
