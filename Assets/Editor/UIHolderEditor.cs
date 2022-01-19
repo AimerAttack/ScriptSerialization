@@ -12,7 +12,7 @@ using UnityEngine;
 public class UIHolderEditor : OdinEditor
 {
     private string[] typeNames = null;
-    private int curIndex;
+    private int curIndex = -1;
     private SerializedProperty propTypeName;
     private bool needForceRefreshByCompile = false;
     private Dictionary<string,ClassField> stashFieldData = new Dictionary<string,ClassField>();
@@ -21,6 +21,8 @@ public class UIHolderEditor : OdinEditor
         serializedObject.Update();
 
         int selectedIndex = EditorGUILayout.Popup("ClassType", curIndex, typeNames);
+        if (selectedIndex < 0)
+            selectedIndex = 0;
         if (curIndex != selectedIndex)
         {
             stashFieldData.Clear();
@@ -425,7 +427,7 @@ public class UIHolderEditor : OdinEditor
     private void RefreshTypeNames()
     {
         typeNames = GetTypeNames(typeof(UIHolderInfo));
-        curIndex = 0;
+        curIndex = -1;
         for (int i = 0; i < typeNames.Length; i++)
         {
             if (typeNames[i] == propTypeName.stringValue)

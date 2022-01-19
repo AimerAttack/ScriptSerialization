@@ -54,17 +54,23 @@ public class ClassData
         cls.propName = propName;
         
         cls.fields = new List<ClassField>(fields == null ? 0 : fields.Count);
-        for (int i = 0; i < fields.Count; i++)
+        if (fields != null)
         {
-            cls.fields.Add(fields[i].Copy());
+            for (int i = 0; i < fields.Count; i++)
+            {
+                cls.fields.Add(fields[i].Copy());
+            }
         }
-        
-        cls.classes = new List<ClassData>(classes.Count);
-        for (int i = 0; i < classes.Count; i++)
+
+        cls.classes = new List<ClassData>(classes == null ? 0 : classes.Count);
+        if (classes != null)
         {
-            cls.classes.Add(classes[i].Copy());
+            for (int i = 0; i < classes.Count; i++)
+            {
+                cls.classes.Add(classes[i].Copy());
+            }
         }
-        
+
         return cls;
     }
     
