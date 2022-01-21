@@ -10,6 +10,7 @@ using UnityEngine;
 public class UIHolder : MonoBehaviour
 {
     public ClassData ClassData;
+
 }
 
 [Serializable]

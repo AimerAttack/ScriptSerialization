@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 namespace DefaultNamespace
@@ -11,8 +13,7 @@ namespace DefaultNamespace
     {
         public class MainUIHolder : UIHolderInfo
         {
-            public List<Image> objs;
-            public List<C2> c1;
+            public GameObject[] objs2;
         }
 
         public class C1 : UIHolderSubClassInfo
@@ -55,7 +56,9 @@ namespace DefaultNamespace
             for (int i = 0; i < fields.Count; i++)
             {
                 var info = fields[i];
+                Profiler.BeginSample("---GetField");
                 var field = type.GetField(info.Name);
+                Profiler.EndSample();
                 if (info.needUnityFields)
                 {
                     if (info.unityFields != null)
@@ -87,7 +90,8 @@ namespace DefaultNamespace
                             for (int j = 0; j < info.unityFields.Count; j++)
                             {
                                 var item = info.unityFields[j];
-                                list.Add(item.obj == null ? item.component : item.obj);
+                                var script = item.component.GetComponent(infoType);
+                                list.Add(item.obj == null ? script : item.obj);
                             }
 
                             field.SetValue(target, list); 
@@ -100,10 +104,6 @@ namespace DefaultNamespace
                     if (info.classes != null)
                     {
                         var infoType = Type.GetType(info.ListItemType);
-                        if (infoType == null)
-                            infoType = Type.GetType(info.ListItemType + ",UnityEngine");
-                        if (infoType == null)
-                            infoType = Type.GetType(info.ListItemType + ",UnityEngine.UI");
                         if (info.ListType == ClassField.TYPE_ARRAY)
                         {
                             var arr = Array.CreateInstance(infoType, info.classes.Count);
@@ -194,15 +194,24 @@ namespace DefaultNamespace
                 ProcSubClass(subCls, subClsType,cls.classes);
             }
         }
-        
+
+
+        private Assembly assemblyUI;
+        private Assembly assemblyUnity;
+        private Assembly assemblyCSharp;
+
         private void Awake()
         {
-            var holder = _holder;
-            for (int i = 0; i < holder.objs.Count; i++)
-            {
-                Debug.Log(holder.objs[i]);
-            }
+            assemblyUI = Assembly.Load("UnityEngine.UI");
+            assemblyUnity = Assembly.Load("UnityEngine");
+        }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                var holder = _holder;
+            }
         }
     }
 }
