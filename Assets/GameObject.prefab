@@ -61,43 +61,34 @@ MonoBehaviour:
     propName: 
     ClassName: DefaultNamespace.MainUI+MainUIHolder
     fields:
-    - Name: objs2
-      ClassType: UnityEngine.GameObject[]
+    - Name: objs
+      ClassType: System.Int32[]
       val: 
       obj: {fileID: 0}
       component: {fileID: 0}
       boolVal: 0
       colorVal: {r: 0, g: 0, b: 0, a: 0}
       ListType: TYPE_ARRAY
-      ListItemType: UnityEngine.GameObject
-      needUnityFields: 1
-      unityFields:
-      - Name: 0
-        ClassType: UnityEngine.GameObject
-        val: 
-        obj: {fileID: 7444835446359872886}
-        component: {fileID: 0}
-        boolVal: 0
-        colorVal: {r: 0, g: 0, b: 0, a: 0}
-        ListType: 
-        ListItemType: 
-        needUnityFields: 0
-        unityFields: []
-        needClasses: 0
-        classes: []
-      - Name: 1
-        ClassType: UnityEngine.GameObject
-        val: 
-        obj: {fileID: 7444835446359872886}
-        component: {fileID: 0}
-        boolVal: 0
-        colorVal: {r: 0, g: 0, b: 0, a: 0}
-        ListType: 
-        ListItemType: 
-        needUnityFields: 0
-        unityFields: []
-        needClasses: 0
-        classes: []
+      ListItemType: System.Int32
+      needUnityFields: 0
+      unityFields: []
       needClasses: 0
       classes: []
+      needPrimitiveField: 1
+      PrimitiveFields:
+      - Name: 0
+        ClassType: System.Int32
+        val: 23
+        obj: {fileID: 0}
+        component: {fileID: 0}
+        boolVal: 0
+        colorVal: {r: 0, g: 0, b: 0, a: 0}
+        ListType: 
+        ListItemType: 
+        needUnityFields: 0
+        unityFields: []
+        needClasses: 0
+        classes: []
+        needPrimitiveField: 0
+        PrimitiveFields: []
     classes: []

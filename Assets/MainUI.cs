@@ -13,7 +13,8 @@ namespace DefaultNamespace
     {
         public class MainUIHolder : UIHolderInfo
         {
-            public GameObject[] objs2;
+            // public int[] objs;
+            public C4[] ddd;
         }
 
         public class C1 : UIHolderSubClassInfo
@@ -90,8 +91,13 @@ namespace DefaultNamespace
                             for (int j = 0; j < info.unityFields.Count; j++)
                             {
                                 var item = info.unityFields[j];
-                                var script = item.component.GetComponent(infoType);
-                                list.Add(item.obj == null ? script : item.obj);
+                                if(item.obj != null)
+                                    list.Add(item.obj);
+                                else
+                                {
+                                    var script = item.component.GetComponent(infoType);
+                                    list.Add(script);
+                                }
                             }
 
                             field.SetValue(target, list); 
@@ -143,6 +149,7 @@ namespace DefaultNamespace
                 {
                     object obj = null;
 
+                    //TODO:
                     if (info.ClassType == typeof(string).ToString())
                     {
                         obj = info.val;
@@ -204,14 +211,9 @@ namespace DefaultNamespace
         {
             assemblyUI = Assembly.Load("UnityEngine.UI");
             assemblyUnity = Assembly.Load("UnityEngine");
+            var holder = _holder;
+            
         }
 
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                var holder = _holder;
-            }
-        }
     }
 }
