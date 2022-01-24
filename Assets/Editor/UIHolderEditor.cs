@@ -192,10 +192,9 @@ public class UIHolderEditor : OdinEditor
             fieldArr.InsertArrayElementAtIndex(i);
 
             var field = fieldArr.GetArrayElementAtIndex(i);
-
+            var assemblyField = fields[i].FieldType.Assembly;
             path.Push(fields[i].Name);
             SetString(field,"Name",fields[i].Name);
-
             if (typeof(IList).IsAssignableFrom(fields[i].FieldType))
             {
                 string typeName = string.Empty;
@@ -327,7 +326,7 @@ public class UIHolderEditor : OdinEditor
                     SetFieldToDefault(field);
                 }
             }
-
+            SetAssemblyType(assemblyField, field);
             path.Pop();
         }
     }
@@ -403,6 +402,28 @@ public class UIHolderEditor : OdinEditor
     {
         var prop = self.FindPropertyRelative(propName);
         prop.colorValue = val;
+    }
+    
+    void SetAssemblyType(Assembly assembly, SerializedProperty field)
+    {
+        var name = GetAssemblyName(assembly);
+        SetString(field, "AssemblyType", name);
+    }
+    
+    string GetAssemblyName(Assembly assembly)
+    {
+        if (assembly.ManifestModule.Name == "UnityEngine.UI.dll")
+        {
+            return ClassField.ASSAMBLE_UNITY_UI;
+        }
+        else if (assembly.ManifestModule.Name == "UnityEngine.CoreModule.dll")
+        {
+            return ClassField.ASSAMBLE_UNITY;
+        }
+        else
+        {
+            return ClassField.ASSAMBLE_SELF;
+        } 
     }
 
     string GetString(SerializedProperty self, string propName)

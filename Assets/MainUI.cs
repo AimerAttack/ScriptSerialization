@@ -13,6 +13,7 @@ namespace DefaultNamespace
         public class MainUIHolder : UIHolderInfo
         {
             public List<GameObject> objs2;
+            public C4[] c4s;
         }
 
         public class C1 : UIHolderSubClassInfo
@@ -60,11 +61,7 @@ namespace DefaultNamespace
                 {
                     if (info.unityFields != null)
                     {
-                        var infoType = Type.GetType(info.ListItemType);
-                        if (infoType == null)
-                            infoType = Type.GetType(info.ListItemType + ",UnityEngine");
-                        if (infoType == null)
-                            infoType = Type.GetType(info.ListItemType + ",UnityEngine.UI");
+                        var infoType = GetType(info.AssemblyType, info.ListItemType);
                         if (info.ListType == ClassField.TYPE_ARRAY)
                         {
                             var arr = Array.CreateInstance(infoType, info.unityFields.Count);
@@ -110,7 +107,7 @@ namespace DefaultNamespace
                 {
                     if (info.classes != null)
                     {
-                        var infoType = Type.GetType(info.ListItemType);
+                        var infoType = GetType(info.AssemblyType,info.ListItemType);
                         if (info.ListType == ClassField.TYPE_ARRAY)
                         {
                             var arr = Array.CreateInstance(infoType, info.classes.Count);
@@ -193,11 +190,7 @@ namespace DefaultNamespace
                     }
                     else
                     {
-                        var infoType = Type.GetType(info.ClassType);
-                        if (infoType == null)
-                            infoType = Type.GetType(info.ClassType + ",UnityEngine");
-                        if (infoType == null)
-                            infoType = Type.GetType(info.ClassType + ",UnityEngine.UI");
+                        var infoType = GetType(info.AssemblyType,info.ClassType);
                         if (infoType != null)
                         {
                             if (infoType.IsSubclassOf(typeof(Component)))
@@ -227,6 +220,30 @@ namespace DefaultNamespace
             }
         }
 
+        Type GetType(string assemblyType,string typeName)
+        {
+            Type result = null;
+            if (assemblyType == ClassField.ASSAMBLE_UNITY)
+            {
+                result = assemblyUnity.GetType(typeName);
+            }
+            else if (assemblyType == ClassField.ASSAMBLE_UNITY_UI)
+            {
+                result = assemblyUI.GetType(typeName);
+            }
+            else if (assemblyType == ClassField.ASSAMBLE_SELF)
+            {
+                result = Type.GetType(typeName);
+            }
+            
+            if(result == null)
+            {
+                result = assemblyCSharp.GetType(typeName);
+            }
+
+            return result;
+        }
+
 
         private Assembly assemblyUI;
         private Assembly assemblyUnity;
@@ -236,6 +253,7 @@ namespace DefaultNamespace
         {
             assemblyUI = Assembly.Load("UnityEngine.UI");
             assemblyUnity = Assembly.Load("UnityEngine");
+            assemblyCSharp = Assembly.Load("Assembly-CSharp");
         }
 
         private void Update()

@@ -61,34 +61,124 @@ MonoBehaviour:
     propName: 
     ClassName: DefaultNamespace.MainUI+MainUIHolder
     fields:
-    - Name: objs
-      ClassType: System.Int32[]
+    - Name: objs2
+      ClassType: System.Collections.Generic.List`1[UnityEngine.GameObject]
+      AssemblyType: Self
+      val: 
+      obj: {fileID: 0}
+      component: {fileID: 0}
+      boolVal: 0
+      colorVal: {r: 0, g: 0, b: 0, a: 0}
+      ListType: TYPE_LIST
+      ListItemType: UnityEngine.GameObject
+      needUnityFields: 1
+      unityFields:
+      - Name: 0
+        ClassType: UnityEngine.GameObject
+        AssemblyType: 
+        val: 
+        obj: {fileID: 7444835446359872886}
+        component: {fileID: 0}
+        boolVal: 0
+        colorVal: {r: 0, g: 0, b: 0, a: 0}
+        ListType: TYPE_NORMAL
+        ListItemType: 
+        needUnityFields: 0
+        unityFields: []
+        needClasses: 0
+        classes: []
+      - Name: 1
+        ClassType: UnityEngine.GameObject
+        AssemblyType: 
+        val: 
+        obj: {fileID: 7444835446359872886}
+        component: {fileID: 0}
+        boolVal: 0
+        colorVal: {r: 0, g: 0, b: 0, a: 0}
+        ListType: TYPE_NORMAL
+        ListItemType: 
+        needUnityFields: 0
+        unityFields: []
+        needClasses: 0
+        classes: []
+      needClasses: 0
+      classes: []
+    - Name: c4s
+      ClassType: DefaultNamespace.MainUI+C4[]
+      AssemblyType: Self
       val: 
       obj: {fileID: 0}
       component: {fileID: 0}
       boolVal: 0
       colorVal: {r: 0, g: 0, b: 0, a: 0}
       ListType: TYPE_ARRAY
-      ListItemType: System.Int32
+      ListItemType: DefaultNamespace.MainUI+C4
       needUnityFields: 0
-      unityFields: []
-      needClasses: 0
-      classes: []
-      needPrimitiveField: 1
-      PrimitiveFields:
+      unityFields:
       - Name: 0
-        ClassType: System.Int32
-        val: 23
+        ClassType: UnityEngine.GameObject
+        AssemblyType: 
+        val: 
         obj: {fileID: 0}
         component: {fileID: 0}
         boolVal: 0
         colorVal: {r: 0, g: 0, b: 0, a: 0}
-        ListType: 
+        ListType: TYPE_NORMAL
         ListItemType: 
         needUnityFields: 0
         unityFields: []
         needClasses: 0
         classes: []
-        needPrimitiveField: 0
-        PrimitiveFields: []
+      - Name: 1
+        ClassType: UnityEngine.GameObject
+        AssemblyType: 
+        val: 
+        obj: {fileID: 0}
+        component: {fileID: 0}
+        boolVal: 0
+        colorVal: {r: 0, g: 0, b: 0, a: 0}
+        ListType: TYPE_NORMAL
+        ListItemType: 
+        needUnityFields: 0
+        unityFields: []
+        needClasses: 0
+        classes: []
+      needClasses: 1
+      classes:
+      - propName: 0
+        ClassName: DefaultNamespace.MainUI+C4
+        fields:
+        - Name: c_4
+          ClassType: System.Int32
+          AssemblyType: 
+          val: 3
+          obj: {fileID: 0}
+          component: {fileID: 0}
+          boolVal: 0
+          colorVal: {r: 0, g: 0, b: 0, a: 0}
+          ListType: TYPE_NORMAL
+          ListItemType: 
+          needUnityFields: 0
+          unityFields: []
+          needClasses: 0
+          classes: []
+        classes: []
+      - propName: 1
+        ClassName: DefaultNamespace.MainUI+C4
+        fields:
+        - Name: c_4
+          ClassType: System.Int32
+          AssemblyType: 
+          val: 2
+          obj: {fileID: 0}
+          component: {fileID: 0}
+          boolVal: 0
+          colorVal: {r: 0, g: 0, b: 0, a: 0}
+          ListType: TYPE_NORMAL
+          ListItemType: 
+          needUnityFields: 0
+          unityFields: []
+          needClasses: 0
+          classes: []
+        classes: []
     classes: []

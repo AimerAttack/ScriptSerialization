@@ -134,6 +134,7 @@ public class ClassField
     public string Name;
     [HideInInspector]
     public string ClassType;
+    [HideInInspector] public string AssemblyType;
     
     [ShowIf("$ConditionVal"),LabelText("$GetName")]
     public string val;
@@ -375,6 +376,7 @@ public class ClassField
 
         clsField.Name = Name;
         clsField.ClassType = ClassType;
+        clsField.AssemblyType = AssemblyType;
         clsField.val = val;
         clsField.obj = obj;
         clsField.component = component;
@@ -426,11 +428,30 @@ public class ClassField
         }
         return true;
     }
-    
+    public static HashSet<Type> PrimitiveTypes = new HashSet<Type>()
+    {
+        typeof(string), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong),
+        typeof(float)
+    };
+
+    private static HashSet<string> PrimitiveTypesStr;
+    public static bool IsPrimitiveType(string clsType)
+    {
+        if (PrimitiveTypesStr == null)
+        {
+            PrimitiveTypesStr = new HashSet<string>();
+            foreach (Type t in PrimitiveTypes)
+            {
+                PrimitiveTypesStr.Add(t.ToString());
+            }
+        }
+
+        return PrimitiveTypesStr.Contains(clsType);
+    }
+ 
     bool ConditionVal()
     {
-        //TODO:待补全number类型
-        return ClassType == typeof(string).ToString() || ClassType == typeof(int).ToString();
+        return IsPrimitiveType(ClassType);
     }
 
     bool ConditionObj()
