@@ -68,24 +68,6 @@ public class UIHolderEditor : OdinEditor
             }
         }
 
-        if (field.PrimitiveFields != null)
-        {
-            for (int i = 0; i < field.PrimitiveFields.Count; i++)
-            {
-                path.Push(i.ToString());
-                StashPrimitiveField(field.PrimitiveFields[i], path);
-                path.Pop();
-            }
-        }
-
-        path.Pop();
-    }
-
-    void StashPrimitiveField(ClassField field, Stack<string> path)
-    {
-        path.Push(field.Name);
-        var name = string.Join(".", path);
-        stashFieldData[name] = field;
         path.Pop();
     }
 
@@ -247,12 +229,7 @@ public class UIHolderEditor : OdinEditor
                     var assemblyName = ClassField.GetAssemblyName(assembly);
                     SetBool(field, "needClasses", false);
                     SetBool(field, "needUnityFields", false);
-                    SetBool(field, "needPrimitiveField", false);
-                    if (itemType.IsPrimitive)
-                    {
-                        SetBool(field, "needPrimitiveField", true);
-                    }
-                    else if (assemblyName == ClassField.ASSAMBLE_SELF)
+                    if (assemblyName == ClassField.ASSAMBLE_SELF)
                     {
                         SetBool(field, "needClasses", true);
                     }
@@ -268,29 +245,6 @@ public class UIHolderEditor : OdinEditor
                     string name = string.Join(".", path);
                     if (stashFieldData.TryGetValue(name, out var stashData))
                     {
-                        var curNeedPrimitiveField = GetBool(field, "needPrimitiveField");
-                        if (curNeedPrimitiveField && stashData.PrimitiveFields != null)
-                        {
-                            if (stashData.ListItemType == typeName)
-                            {
-                                var primitiveField = field.FindPropertyRelative("PrimitiveFields");
-                                for (int j = 0; j < stashData.PrimitiveFields.Count; j++)
-                                {
-                                    var data = stashData.PrimitiveFields[j];
-                                    primitiveField.InsertArrayElementAtIndex(j);
-                                    var clsItem = primitiveField.GetArrayElementAtIndex(j);
-                                    SetString(clsItem, "ClassType", stashData.ListItemType);
-                                    SetString(clsItem, "ListType", ClassField.TYPE_NORMAL);
-                                    SetString(clsItem, "Name", j.ToString());
-                                    SetString(clsItem, "val", data.val);
-                                    SetObject(clsItem, "obj", data.obj);
-                                    SetObject(clsItem, "component", data.component);
-                                    SetBool(clsItem, "boolVal", data.boolVal);
-                                    SetColor(clsItem, "colorVal", data.colorVal); 
-                                }
-                            }
-                        }
-                        
                         var curNeedClasses = GetBool(field, "needClasses");
                         if (curNeedClasses && stashData.classes != null)
                         {

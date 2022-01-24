@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 namespace DefaultNamespace
@@ -13,8 +12,7 @@ namespace DefaultNamespace
     {
         public class MainUIHolder : UIHolderInfo
         {
-            // public int[] objs;
-            public C4[] ddd;
+            public List<GameObject> objs2;
         }
 
         public class C1 : UIHolderSubClassInfo
@@ -57,9 +55,7 @@ namespace DefaultNamespace
             for (int i = 0; i < fields.Count; i++)
             {
                 var info = fields[i];
-                Profiler.BeginSample("---GetField");
                 var field = type.GetField(info.Name);
-                Profiler.EndSample();
                 if (info.needUnityFields)
                 {
                     if (info.unityFields != null)
@@ -76,7 +72,12 @@ namespace DefaultNamespace
                             for (int j = 0; j < info.unityFields.Count; j++)
                             {
                                 var item = info.unityFields[j];
-                                arr.SetValue(item.obj == null ? item.component : item.obj, j);
+                                if (item.obj != null)
+                                    arr.SetValue(item.obj,j);
+                                else
+                                {
+                                    arr.SetValue(item.component, j);
+                                }
                             }
 
                             field.SetValue(target, arr);
@@ -87,11 +88,11 @@ namespace DefaultNamespace
                             //指定泛型的具体类型
                             Type newType = listType.MakeGenericType(new Type[]{infoType});
                             //创建一个list返回
-                            var list = (IList)Activator.CreateInstance(newType,new object[]{});
+                            var list = (IList)Activator.CreateInstance(newType);
                             for (int j = 0; j < info.unityFields.Count; j++)
                             {
                                 var item = info.unityFields[j];
-                                if(item.obj != null)
+                                if (item.obj != null)
                                     list.Add(item.obj);
                                 else
                                 {
@@ -131,7 +132,7 @@ namespace DefaultNamespace
                             //指定泛型的具体类型
                             Type newType = listType.MakeGenericType(new Type[]{infoType});
                             //创建一个list返回
-                            var list = (IList)Activator.CreateInstance(newType,new object[]{});
+                            var list = (IList)Activator.CreateInstance(newType);
                             for (int j = 0; j < info.classes.Count; j++)
                             {
                                 var item = info.classes[j];
@@ -149,19 +150,43 @@ namespace DefaultNamespace
                 {
                     object obj = null;
 
-                    //TODO:
                     if (info.ClassType == typeof(string).ToString())
                     {
                         obj = info.val;
                     }
+                    else if (info.ClassType == typeof(short).ToString())
+                    {
+                        obj = string.IsNullOrEmpty(info.val) ? 0 : short.Parse(info.val);
+                    }
+                    else if (info.ClassType == typeof(ushort).ToString())
+                    {
+                        obj = string.IsNullOrEmpty(info.val) ? 0 : ushort.Parse(info.val);
+                    }
                     else if (info.ClassType == typeof(int).ToString())
                     {
-                        obj = string.IsNullOrWhiteSpace(info.val) ? 0 : int.Parse(info.val);
+                        obj = string.IsNullOrEmpty(info.val) ? 0 : int.Parse(info.val);
+                    }
+                    else if (info.ClassType == typeof(uint).ToString())
+                    {
+                        obj = string.IsNullOrEmpty(info.val) ? 0 : uint.Parse(info.val);
+                    }
+                    else if (info.ClassType == typeof(long).ToString())
+                    {
+                        obj = string.IsNullOrEmpty(info.val) ? 0 : long.Parse(info.val);
+                    }
+                    else if (info.ClassType == typeof(ulong).ToString())
+                    {
+                        obj = string.IsNullOrEmpty(info.val) ? 0 : ulong.Parse(info.val);
+                    }
+                    else if (info.ClassType == typeof(float).ToString())
+                    {
+                        obj = string.IsNullOrEmpty(info.val) ? 0 : float.Parse(info.val);
                     }
                     else if (info.ClassType == typeof(bool).ToString())
                     {
                         obj = info.boolVal;
                     }
+                   
                     else if (info.ClassType == typeof(GameObject).ToString())
                     {
                         obj = info.obj;
@@ -211,9 +236,14 @@ namespace DefaultNamespace
         {
             assemblyUI = Assembly.Load("UnityEngine.UI");
             assemblyUnity = Assembly.Load("UnityEngine");
-            var holder = _holder;
-            
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                var holder = _holder;
+            }
+        }
     }
 }
