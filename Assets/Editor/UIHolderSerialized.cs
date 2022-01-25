@@ -8,8 +8,8 @@ using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(UIHolder))]
-public class UIHolderEditor : OdinEditor
+[CustomEditor(typeof(UIHolderSerialized))]
+public class UIHolderSerializedEditor : OdinEditor
 {
     private string[] typeNames = null;
     private int curIndex = -1;
@@ -18,8 +18,9 @@ public class UIHolderEditor : OdinEditor
     private Dictionary<string,ClassField> stashFieldData = new Dictionary<string,ClassField>();
     public override void OnInspectorGUI()
     {
-        serializedObject.Update();
 
+#if !UseILRuntimeDll
+        serializedObject.Update();
         int selectedIndex = EditorGUILayout.Popup("ClassType", curIndex, typeNames);
         if (selectedIndex < 0)
             selectedIndex = 0;
@@ -37,14 +38,97 @@ public class UIHolderEditor : OdinEditor
         {
             ForceRefreshByCompile();
         }
+        #endif
 
         base.OnInspectorGUI();
         needForceRefreshByCompile = false;
     }
+    
+    void OnEnable()
+    {
+        base.OnEnable();
+        propTypeName = serializedObject.FindProperty("ClassData.ClassName");
+        OnCompileComplete();
+    }
 
+    void OnCompileComplete()
+    {
+        RefreshTypeNames();
+        needForceRefreshByCompile = true;
+    }
+
+    private void RefreshTypeNames()
+    {
+        typeNames = GetTypeNames(typeof(UIHolderInfo));
+        curIndex = -1;
+        for (int i = 0; i < typeNames.Length; i++)
+        {
+            if (typeNames[i] == propTypeName.stringValue)
+            {
+                curIndex = i;
+                break;
+            }
+        }
+    }
+    
+    
+    void ForceRefreshByCompile()
+    {
+        stashFieldData.Clear();
+        
+        var clsProp = serializedObject.FindProperty("ClassData");
+        var oldBoxData = GetValue<object>(clsProp);
+        var oldData = oldBoxData as ClassData;
+        oldData = oldData.Copy();
+
+        for (int i = 0; i < oldData.fields.Count; i++)
+        {
+            var stack = new Stack<string>();
+            stack.Push(oldData.ClassName);
+            StashField(oldData.fields[i], stack);
+        }
+
+        for (int i = 0; i < oldData.classes.Count; i++)
+        {
+            var stack = new Stack<string>();
+            stack.Push(oldData.ClassName);
+            StashSubClass(oldData.classes[i], stack);
+        }
+        
+        var fieldsArr = serializedObject.FindProperty("ClassData.fields");
+        var subClassArr = serializedObject.FindProperty("ClassData.classes"); 
+        fieldsArr.ClearArray();
+        subClassArr.ClearArray();
+        
+        OnClassNameChange();
+    }
+
+    void OnClassNameChange()
+    {
+        var assembly = Assembly.Load("Assembly-CSharp");
+        Type type = assembly.GetType(propTypeName.stringValue);
+        var fileds = type.GetFields();
+
+        var fieldsArr = serializedObject.FindProperty("ClassData.fields");
+        var subClassArr = serializedObject.FindProperty("ClassData.classes");
+        
+        
+        var stack = new Stack<string>();
+        stack.Push(type.ToString());
+        ProcFields(fieldsArr, type,stack);
+        
+        var clsStack = new Stack<string>();
+        clsStack.Push(type.ToString());
+        ProcSubClass(subClassArr, type,clsStack);
+
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    #region 缓存数据
+    
     void StashField(ClassField field,Stack<string> path)
     {
-        path.Push(field.Name);
+        path.Push(field.PropName);
         var name = string.Join(".", path);
         stashFieldData[name] = field;
 
@@ -84,95 +168,11 @@ public class UIHolderEditor : OdinEditor
         }
         path.Pop();
     }
-    public static T GetValue<T> (SerializedProperty property) where T : class {
-        object obj = property.serializedObject.targetObject;
-        string path = property.propertyPath.Replace (".Array.data", "");
-        string[] fieldStructure = path.Split ('.');
-        Regex rgx = new Regex (@"\[\d+\]");
-        for (int i = 0; i < fieldStructure.Length; i++) {
-            if (fieldStructure[i].Contains ("[")) {
-                int index = System.Convert.ToInt32 (new string (fieldStructure[i].Where (c => char.IsDigit (c)).ToArray ()));
-                obj = GetFieldValueWithIndex (rgx.Replace (fieldStructure[i], ""), obj, index);
-            } else {
-                obj = GetFieldValue (fieldStructure[i], obj);
-            }
-        }
-        return (T) obj;
-    }   
+    #endregion
+
+
+    #region 处理序列化数据
     
-    private static object GetFieldValueWithIndex (string fieldName, object obj, int index, BindingFlags bindings = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic) {
-        FieldInfo field = obj.GetType ().GetField (fieldName, bindings);
-        if (field != null) {
-            object list = field.GetValue (obj);
-            if (list.GetType ().IsArray) {
-                return ((object[]) list)[index];
-            } else if (list is IEnumerable) {
-                return ((IList) list)[index];
-            }
-        }
-        return default (object);
-    }
-    private static object GetFieldValue (string fieldName, object obj, BindingFlags bindings = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic) {
-        FieldInfo field = obj.GetType ().GetField (fieldName, bindings);
-        if (field != null) {
-            return field.GetValue (obj);
-        }
-        return default (object);
-    }
-    void ForceRefreshByCompile()
-    {
-        stashFieldData.Clear();
-        
-        var clsProp = serializedObject.FindProperty("ClassData");
-        var oldBoxData = GetValue<object>(clsProp);
-        var oldData = oldBoxData as ClassData;
-        oldData = oldData.Copy();
-
-        for (int i = 0; i < oldData.fields.Count; i++)
-        {
-            var stack = new Stack<string>();
-            stack.Push(oldData.ClassName);
-            StashField(oldData.fields[i], stack);
-        }
-
-        for (int i = 0; i < oldData.classes.Count; i++)
-        {
-            var stack = new Stack<string>();
-            stack.Push(oldData.ClassName);
-            StashSubClass(oldData.classes[i], stack);
-        }
-        
-        var fieldsArr = serializedObject.FindProperty("ClassData.fields");
-        var subClassArr = serializedObject.FindProperty("ClassData.classes"); 
-        fieldsArr.ClearArray();
-        subClassArr.ClearArray();
-        
-        OnClassNameChange();
-    }
-
-    
-
-    void OnClassNameChange()
-    {
-        var assembly = Assembly.Load("Assembly-CSharp");
-        Type type = assembly.GetType(propTypeName.stringValue);
-        var fileds = type.GetFields();
-
-        var fieldsArr = serializedObject.FindProperty("ClassData.fields");
-        var subClassArr = serializedObject.FindProperty("ClassData.classes");
-        
-        
-        var stack = new Stack<string>();
-        stack.Push(type.ToString());
-        ProcFields(fieldsArr, type,stack);
-        
-        var clsStack = new Stack<string>();
-        clsStack.Push(type.ToString());
-        ProcSubClass(subClassArr, type,clsStack);
-
-        serializedObject.ApplyModifiedProperties();
-    }
-
     void ProcFields(SerializedProperty fieldArr, Type type,Stack<string> path)
     {
         fieldArr.ClearArray();
@@ -194,7 +194,7 @@ public class UIHolderEditor : OdinEditor
             var field = fieldArr.GetArrayElementAtIndex(i);
             var assemblyField = fields[i].FieldType.Assembly;
             path.Push(fields[i].Name);
-            SetString(field,"Name",fields[i].Name);
+            SetString(field,"PropName",fields[i].Name);
             if (typeof(IList).IsAssignableFrom(fields[i].FieldType))
             {
                 string typeName = string.Empty;
@@ -247,6 +247,7 @@ public class UIHolderEditor : OdinEditor
                         var curNeedClasses = GetBool(field, "needClasses");
                         if (curNeedClasses && stashData.classes != null)
                         {
+                            //子类型没变，赋值数据
                             if (stashData.ListItemType == typeName)
                             {
                                 var classArr = field.FindPropertyRelative("classes");
@@ -261,7 +262,7 @@ public class UIHolderEditor : OdinEditor
                                     var _type = ClassField.GetType(typeName);
 
                                     SetString(clsItem, "ClassName", typeName);
-                                    SetString(clsItem, "propName", j.ToString());
+                                    SetString(clsItem, "PropName", j.ToString());
 
                                     var _fieldArr = clsItem.FindPropertyRelative("fields");
                                     var _classArr = clsItem.FindPropertyRelative("classes");
@@ -276,6 +277,7 @@ public class UIHolderEditor : OdinEditor
                         var curNeedUnityFields = GetBool(field, "needUnityFields");
                         if (curNeedUnityFields && stashData.unityFields != null)
                         {
+                            //子类型没变，赋值数据
                             if (stashData.ListItemType == typeName)
                             {
                                 var classArr = field.FindPropertyRelative("unityFields");
@@ -287,7 +289,7 @@ public class UIHolderEditor : OdinEditor
 
                                     SetString(clsItem, "ClassType", stashData.ListItemType);
                                     SetString(clsItem, "ListType", ClassField.TYPE_NORMAL);
-                                    SetString(clsItem, "Name", j.ToString());
+                                    SetString(clsItem, "PropName", j.ToString());
                                     SetString(clsItem, "val", data.val);
                                     SetObject(clsItem, "obj", data.obj);
                                     SetObject(clsItem, "component", data.component);
@@ -330,7 +332,7 @@ public class UIHolderEditor : OdinEditor
             path.Pop();
         }
     }
-    
+
 
     void SetFieldToDefault(SerializedProperty field)
     {
@@ -361,7 +363,7 @@ public class UIHolderEditor : OdinEditor
             classArr.InsertArrayElementAtIndex(i);
 
             var clsItem = classArr.GetArrayElementAtIndex(i);
-            SetString(clsItem,"propName",fields[i].Name);
+            SetString(clsItem,"PropName",fields[i].Name);
             SetString(clsItem,"ClassName",fields[i].FieldType.ToString());
 
             var fieldArr = clsItem.FindPropertyRelative("fields");
@@ -373,7 +375,29 @@ public class UIHolderEditor : OdinEditor
             path.Pop();
         }
     }
+    #endregion
+  
 
+    #region 工具函数
+    
+    private static string[] GetTypeNames(System.Type typeBase)
+    {
+        List<string> typeNames = new List<string>();
+        var assembly = Assembly.Load("Assembly-CSharp");
+
+        System.Type[] types = assembly.GetTypes();
+        foreach (System.Type type in types)
+        {
+            if (type.IsClass && !type.IsAbstract && typeBase.IsAssignableFrom(type))
+            {
+                typeNames.Add(type.FullName);
+            }
+        }
+
+        typeNames.Sort();
+        return typeNames.ToArray();
+    }
+    
     bool GetBool(SerializedProperty self, string propName)
     {
         var prop = self.FindPropertyRelative(propName); 
@@ -431,49 +455,41 @@ public class UIHolderEditor : OdinEditor
         var prop = self.FindPropertyRelative(propName);
         return prop.stringValue;
     }
-   
-    void OnEnable()
-    {
-        base.OnEnable();
-        propTypeName = serializedObject.FindProperty("ClassData.ClassName");
-        OnCompileComplete();
-    }
-
-    void OnCompileComplete()
-    {
-        RefreshTypeNames();
-        needForceRefreshByCompile = true;
-    }
-
-    private void RefreshTypeNames()
-    {
-        typeNames = GetTypeNames(typeof(UIHolderInfo));
-        curIndex = -1;
-        for (int i = 0; i < typeNames.Length; i++)
-        {
-            if (typeNames[i] == propTypeName.stringValue)
-            {
-                curIndex = i;
-                break;
+    public static T GetValue<T> (SerializedProperty property) where T : class {
+        object obj = property.serializedObject.targetObject;
+        string path = property.propertyPath.Replace (".Array.data", "");
+        string[] fieldStructure = path.Split ('.');
+        Regex rgx = new Regex (@"\[\d+\]");
+        for (int i = 0; i < fieldStructure.Length; i++) {
+            if (fieldStructure[i].Contains ("[")) {
+                int index = System.Convert.ToInt32 (new string (fieldStructure[i].Where (c => char.IsDigit (c)).ToArray ()));
+                obj = GetFieldValueWithIndex (rgx.Replace (fieldStructure[i], ""), obj, index);
+            } else {
+                obj = GetFieldValue (fieldStructure[i], obj);
             }
         }
-    }
-
-    private static string[] GetTypeNames(System.Type typeBase)
-    {
-        List<string> typeNames = new List<string>();
-        var assembly = Assembly.Load("Assembly-CSharp");
-
-        System.Type[] types = assembly.GetTypes();
-        foreach (System.Type type in types)
-        {
-            if (type.IsClass && !type.IsAbstract && typeBase.IsAssignableFrom(type))
-            {
-                typeNames.Add(type.FullName);
+        return (T) obj;
+    }   
+    
+    private static object GetFieldValueWithIndex (string fieldName, object obj, int index, BindingFlags bindings = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic) {
+        FieldInfo field = obj.GetType ().GetField (fieldName, bindings);
+        if (field != null) {
+            object list = field.GetValue (obj);
+            if (list.GetType ().IsArray) {
+                return ((object[]) list)[index];
+            } else if (list is IEnumerable) {
+                return ((IList) list)[index];
             }
         }
-
-        typeNames.Sort();
-        return typeNames.ToArray();
+        return default (object);
     }
+    private static object GetFieldValue (string fieldName, object obj, BindingFlags bindings = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic) {
+        FieldInfo field = obj.GetType ().GetField (fieldName, bindings);
+        if (field != null) {
+            return field.GetValue (obj);
+        }
+        return default (object);
+    }
+    #endregion
+
 }

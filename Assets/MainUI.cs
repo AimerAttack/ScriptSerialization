@@ -43,7 +43,7 @@ namespace DefaultNamespace
         {
             var holder = new T();
             var type = typeof(T);
-            var holderScript = GetComponent<UIHolder>();
+            var holderScript = GetComponent<UIHolderSerialized>();
 
             ProcFields(holder,type,holderScript.ClassData.fields);
             ProcSubClass(holder,type,holderScript.ClassData.classes);
@@ -56,7 +56,7 @@ namespace DefaultNamespace
             for (int i = 0; i < fields.Count; i++)
             {
                 var info = fields[i];
-                var field = type.GetField(info.Name);
+                var field = type.GetField(info.PropName);
                 if (info.needUnityFields)
                 {
                     if (info.unityFields != null)
@@ -210,7 +210,7 @@ namespace DefaultNamespace
             for (int i = 0; i < subClasses.Count; i++)
             {
                 var cls = subClasses[i];
-                var field = type.GetField(cls.propName);
+                var field = type.GetField(cls.PropName);
                 var subClsType = Type.GetType(cls.ClassName);
                 var subCls = Activator.CreateInstance(subClsType);
                 field.SetValue(target, subCls);

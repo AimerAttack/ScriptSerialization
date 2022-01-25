@@ -7,10 +7,12 @@ using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
-public class UIHolder : MonoBehaviour
+public class UIHolderSerialized : MonoBehaviour
 {
+#if UseILRuntimeDll
+        [HideInInspector]
+#endif
     public ClassData ClassData;
-
 }
 
 [Serializable]
@@ -28,8 +30,9 @@ public class UIHolderSubClassInfo
 [Serializable]
 public class ClassData
 {
+    #region Properties
     [HideInInspector]
-    public string propName;
+    public string PropName;
 
     [HideInInspector]
     public string ClassName;
@@ -45,6 +48,7 @@ public class ClassData
     [ShowIf("$ConditionClass"),LabelText("$GetClassTitle")]
     [Indent]
     public List<ClassData> classes;
+    #endregion
 
 
     public ClassData Copy()
@@ -52,7 +56,7 @@ public class ClassData
         ClassData cls = new ClassData();
 
         cls.ClassName = ClassName;
-        cls.propName = propName;
+        cls.PropName = PropName;
         
         cls.fields = new List<ClassField>(fields == null ? 0 : fields.Count);
         if (fields != null)
@@ -130,8 +134,9 @@ public class ClassField
     public const string TYPE_ARRAY = "TYPE_ARRAY";
     public const string TYPE_LIST = "TYPE_LIST";
     
+    #region Properties
     [HideInInspector]
-    public string Name;
+    public string PropName;
     [HideInInspector]
     public string ClassType;
     [HideInInspector] public string AssemblyType;
@@ -172,18 +177,14 @@ public class ClassField
     [InlineButton("add")]
     public List<ClassData> classes;
     #endregion
+    #endregion
 
-    string ComponentStr()
-    {
-        var typeArr = ClassType.Split('.');
-        var type = typeArr[typeArr.Length - 1];
-        return $"{type} is required";
-    }
+   
     
     void Add()
     {
         var field = new ClassField();
-        field.Name = unityFields.Count.ToString();
+        field.PropName = unityFields.Count.ToString();
         field.ClassType = ListItemType;
         unityFields.Add(field);
     }
@@ -191,7 +192,7 @@ public class ClassField
     void add()
     {
         var cls = new ClassData();
-        cls.propName = classes.Count.ToString();
+        cls.PropName = classes.Count.ToString();
         cls.ClassName = ListItemType;
 
         cls.fields = new List<ClassField>();
@@ -204,7 +205,13 @@ public class ClassField
         
         classes.Add(cls);
     }
-
+    
+    string ComponentStr()
+    {
+        var typeArr = ClassType.Split('.');
+        var type = typeArr[typeArr.Length - 1];
+        return $"{type} is required";
+    }
     public static Type GetType(string typeName)
     {
         var infoType = Type.GetType(typeName + ",Assembly-CSharp");
@@ -247,7 +254,7 @@ public class ClassField
         {
             var field = new ClassField();
 
-            field.Name = fields[i].Name;
+            field.PropName = fields[i].Name;
 
             if (typeof(IList).IsAssignableFrom(fields[i].FieldType))
             {
@@ -325,7 +332,7 @@ public class ClassField
             item.classes = new List<ClassData>();
             item.fields = new List<ClassField>();
 
-            item.propName = fields[i].Name;
+            item.PropName = fields[i].Name;
             item.ClassName = fields[i].FieldType.ToString();
 
             ProcFields(item,fields[i].FieldType);
@@ -342,16 +349,16 @@ public class ClassField
         if (ListType == TYPE_LIST)
         {
             var str = type.Replace("+", ".");
-            return $"{Name} (List<{str}>)";
+            return $"{PropName} (List<{str}>)";
         }
         else if(ListType == TYPE_ARRAY)
         {
             var str = type.Replace("+",".") + "[]";
-            return $"{Name} ({str})";
+            return $"{PropName} ({str})";
         }
         else
         {
-            return Name;
+            return PropName;
         }
     }
     
@@ -374,7 +381,7 @@ public class ClassField
     {
         var clsField = new ClassField();
 
-        clsField.Name = Name;
+        clsField.PropName = PropName;
         clsField.ClassType = ClassType;
         clsField.AssemblyType = AssemblyType;
         clsField.val = val;
@@ -412,7 +419,7 @@ public class ClassField
     {
         var typeArr = ClassType.Split('.');
         var type = typeArr[typeArr.Length - 1];
-        return $"{Name} ({type})";
+        return $"{PropName} ({type})";
     }
     
     bool ComponentValid()
@@ -424,6 +431,8 @@ public class ClassField
                 type = Type.GetType(ClassType+",UnityEngine");
             if(type == null)
                 type = Type.GetType(ClassType+",UnityEngine.UI");
+            if (type == null)
+                return false;
             return component.gameObject.GetComponent(type) != null;
         }
         return true;
