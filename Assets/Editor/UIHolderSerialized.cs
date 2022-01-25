@@ -182,7 +182,7 @@ public class UIHolderSerializedEditor : OdinEditor
         for (int i = 0; i < arr.Length; i++)
         {
             var field = arr[i];
-            if (field.FieldType.IsSubclassOf(typeof(UIHolderSubClassInfo)))
+            if (typeof(UIHolderSubClassInfo).IsAssignableFrom(field.FieldType))
                 continue;
             fields.Add(field);
         }
@@ -357,7 +357,7 @@ public class UIHolderSerializedEditor : OdinEditor
         for (int i = 0; i < arr.Length; i++)
         {
             var field = arr[i];
-            if (!field.FieldType.IsSubclassOf(typeof(UIHolderSubClassInfo)))
+            if (!typeof(UIHolderSubClassInfo).IsAssignableFrom(field.FieldType))
                 continue;
             fields.Add(field);
         }

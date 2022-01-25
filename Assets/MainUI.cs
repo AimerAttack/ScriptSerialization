@@ -206,7 +206,7 @@ namespace DefaultNamespace
                         var infoType = GetType(info.AssemblyType,info.ClassType);
                         if (infoType != null)
                         {
-                            if (infoType.IsSubclassOf(typeof(Component)))
+                            if (typeof(Component).IsAssignableFrom(infoType))
                             {
                                 obj = info.component.GetComponent(infoType);
                             }

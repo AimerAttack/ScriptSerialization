@@ -250,7 +250,7 @@ public class ClassField
         for (int i = 0; i < arr.Length; i++)
         {
             var field = arr[i];
-            if (field.FieldType.IsSubclassOf(typeof(UIHolderSubClassInfo)))
+            if (typeof(UIHolderSubClassInfo).IsAssignableFrom(field.FieldType))
                 continue;
             fields.Add(field);
         }
@@ -326,7 +326,7 @@ public class ClassField
         for (int i = 0; i < arr.Length; i++)
         {
             var field = arr[i];
-            if (!field.FieldType.IsSubclassOf(typeof(UIHolderSubClassInfo)))
+            if (!typeof(UIHolderSubClassInfo).IsAssignableFrom(field.FieldType))
                 continue;
             fields.Add(field);
         }
@@ -487,7 +487,7 @@ public class ClassField
             type = Type.GetType(ClassType + ",UnityEngine.UI");
         if (type == null)
             return false;
-        return type.IsSubclassOf(typeof(Component));
+        return typeof(Component).IsAssignableFrom(type);
     }
 
     bool ConditionBool()
