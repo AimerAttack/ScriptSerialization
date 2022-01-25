@@ -144,17 +144,17 @@ public class ClassField
     [ShowIf("$ConditionVal"),LabelText("$GetName")]
     public string val;
     
-    [Required,ChildGameObjectsOnly,ShowIf("$ConditionObj"),LabelText("$Name")]
+    [Required,ChildGameObjectsOnly,ShowIf("$ConditionObj"),LabelText("$PropName")]
     public GameObject obj;
     
     [ValidateInput("ComponentValid","$ComponentStr")]
     [Required("$ComponentStr"),ChildGameObjectsOnly,ShowIf("$ConditionComponent"),LabelText("$GetName")]
     public Component component;
     
-    [ShowIf("$ConditionBool"),LabelText("$Name")]
+    [ShowIf("$ConditionBool"),LabelText("$PropName")]
     public bool boolVal;
     
-    [ShowIf("$ConditionColor"),LabelText("$Name")]
+    [ShowIf("$ConditionColor"),LabelText("$PropName")]
     public Color colorVal;
     
     #region Array logic
