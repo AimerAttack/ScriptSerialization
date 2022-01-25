@@ -310,6 +310,8 @@ public class UIHolderSerializedEditor : OdinEditor
                 {
                     if (stashData.ClassType == fields[i].FieldType.ToString())
                     {
+                        SetBool(field, "needClasses", false);
+                        SetBool(field, "needUnityFields", false);
                         SetString(field, "val", stashData.val);
                         SetObject(field, "obj", stashData.obj);
                         SetObject(field, "component", stashData.component);
@@ -341,6 +343,8 @@ public class UIHolderSerializedEditor : OdinEditor
         SetObject(field,"component",null);
         SetBool(field, "boolVal", false); 
         SetColor(field, "colorVal",Color.white);
+        SetBool(field, "needUnityFields", false);
+        SetBool(field, "needClasses", false);
     }
 
     void ProcSubClass(SerializedProperty classArr, Type type,Stack<string> path)

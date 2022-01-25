@@ -10,6 +10,19 @@ namespace DefaultNamespace
 {
     public class MainUI : MonoBehaviour
     {
+    public class AmuletHolder : UIHolderInfo
+            {
+                public CompInfo comp;
+            }
+    
+            public class CompInfo : UIHolderSubClassInfo
+            {
+                public GameObject[] go;
+                public Image img;
+            }
+    
+
+    
         public class MainUIHolder : UIHolderInfo
         {
             public List<GameObject> objs2;
@@ -37,7 +50,7 @@ namespace DefaultNamespace
             public int c_4;
         }
 
-        private MainUIHolder _holder => Get<MainUIHolder>();
+        private AmuletHolder _holder => Get<AmuletHolder>();
   
         T Get<T>() where T : UIHolderInfo,new()
         {
@@ -254,13 +267,15 @@ namespace DefaultNamespace
             assemblyUI = Assembly.Load("UnityEngine.UI");
             assemblyUnity = Assembly.Load("UnityEngine");
             assemblyCSharp = Assembly.Load("Assembly-CSharp");
+            var holder = _holder;
+            Debug.Log(holder.comp.img);
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
-                var holder = _holder;
+                
             }
         }
     }

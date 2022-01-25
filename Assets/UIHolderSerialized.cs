@@ -18,36 +18,34 @@ public class UIHolderSerialized : MonoBehaviour
 [Serializable]
 public class UIHolderInfo
 {
-    
 }
 
 [Serializable]
 public class UIHolderSubClassInfo
 {
-    
 }
 
 [Serializable]
 public class ClassData
 {
     #region Properties
-    [HideInInspector]
-    public string PropName;
 
-    [HideInInspector]
-    public string ClassName;
-    
+    [HideInInspector] public string PropName;
+
+    [HideInInspector] public string ClassName;
+
     [FoldoutGroup("$GetClassName")]
     [ListDrawerSettings(IsReadOnly = true)]
-    [ShowIf("$ConditionFields"),LabelText("$GetFieldTitle")]
+    [ShowIf("$ConditionFields"), LabelText("$GetFieldTitle")]
     [Indent]
     public List<ClassField> fields;
 
     [FoldoutGroup("$GetClassName")]
     [ListDrawerSettings(IsReadOnly = true)]
-    [ShowIf("$ConditionClass"),LabelText("$GetClassTitle")]
+    [ShowIf("$ConditionClass"), LabelText("$GetClassTitle")]
     [Indent]
     public List<ClassData> classes;
+
     #endregion
 
 
@@ -57,7 +55,7 @@ public class ClassData
 
         cls.ClassName = ClassName;
         cls.PropName = PropName;
-        
+
         cls.fields = new List<ClassField>(fields == null ? 0 : fields.Count);
         if (fields != null)
         {
@@ -78,7 +76,7 @@ public class ClassData
 
         return cls;
     }
-    
+
     string GetClassName()
     {
         if (!string.IsNullOrEmpty(ClassName))
@@ -86,15 +84,20 @@ public class ClassData
             var arr = ClassName.Split('+');
             if (arr.Length > 1)
             {
-                return arr[arr.Length - 1];
+                if(string.IsNullOrEmpty(PropName))
+                    return arr[arr.Length - 1];    
+                return $"{PropName}({arr[arr.Length - 1]})";
             }
             else
             {
                 arr = ClassName.Split('.');
                 if (arr.Length > 1)
-                    return arr[arr.Length - 1];
+                    if(string.IsNullOrEmpty(PropName))
+                        return arr[arr.Length - 1];    
+                    return $"{PropName}({arr[arr.Length - 1]})";
             }
         }
+
         return ClassName;
     }
 
@@ -107,7 +110,7 @@ public class ClassData
     {
         return $"Fields({fields.Count})";
     }
-    
+
     bool ConditionClass()
     {
         return classes != null && classes.Count > 0;
@@ -125,62 +128,63 @@ public class ClassField
     public static Regex regArray = new Regex(@"(.*)\[\]");
     public static Regex regList = new Regex(@"System.Collections.Generic.List`1\[(.*)\]");
 
-    
+
     public const string ASSAMBLE_UNITY = "UnityEngine";
     public const string ASSAMBLE_UNITY_UI = "UnityEngine.UI";
     public const string ASSAMBLE_SELF = "Self";
-    
+
     public const string TYPE_NORMAL = "TYPE_NORMAL";
     public const string TYPE_ARRAY = "TYPE_ARRAY";
     public const string TYPE_LIST = "TYPE_LIST";
-    
+
     #region Properties
-    [HideInInspector]
-    public string PropName;
-    [HideInInspector]
-    public string ClassType;
+
+    [HideInInspector] public string PropName;
+    [HideInInspector] public string ClassType;
     [HideInInspector] public string AssemblyType;
-    
-    [ShowIf("$ConditionVal"),LabelText("$GetName")]
+
+    [ShowIf("$ConditionVal"), LabelText("$GetName")]
     public string val;
-    
-    [Required,ChildGameObjectsOnly,ShowIf("$ConditionObj"),LabelText("$PropName")]
+
+    [Required, ChildGameObjectsOnly, ShowIf("$ConditionObj"), LabelText("$PropName")]
     public GameObject obj;
-    
-    [ValidateInput("ComponentValid","$ComponentStr")]
-    [Required("$ComponentStr"),ChildGameObjectsOnly,ShowIf("$ConditionComponent"),LabelText("$GetName")]
+
+    [ValidateInput("ComponentValid", "$ComponentStr")]
+    [Required("$ComponentStr"), ChildGameObjectsOnly, ShowIf("$ConditionComponent"), LabelText("$GetName")]
     public Component component;
-    
-    [ShowIf("$ConditionBool"),LabelText("$PropName")]
+
+    [ShowIf("$ConditionBool"), LabelText("$PropName")]
     public bool boolVal;
-    
-    [ShowIf("$ConditionColor"),LabelText("$PropName")]
+
+    [ShowIf("$ConditionColor"), LabelText("$PropName")]
     public Color colorVal;
-    
+
     #region Array logic
 
-    [HideInInspector]
-    public string ListType;
+    [HideInInspector] public string ListType;
     [HideInInspector] public string ListItemType;
-    
+
     [HideInInspector] public bool needUnityFields;
+
     [Indent]
     [ListDrawerSettings(HideAddButton = true)]
-    [ShowIf("ConditionUnityFieldArray"),LabelText("$GetListName")]
+    [ShowIf("ConditionUnityFieldArray"), LabelText("$GetListName")]
     [InlineButton("Add")]
     public List<ClassField> unityFields;
 
     [HideInInspector] public bool needClasses;
+
     [Indent]
     [ListDrawerSettings(HideAddButton = true)]
-    [ShowIf("$ConditionClassList"),LabelText("$GetListName")]
+    [ShowIf("$ConditionClassList"), LabelText("$GetListName")]
     [InlineButton("add")]
     public List<ClassData> classes;
-    #endregion
+
     #endregion
 
-   
-    
+    #endregion
+
+
     void Add()
     {
         var field = new ClassField();
@@ -188,7 +192,7 @@ public class ClassField
         field.ClassType = ListItemType;
         unityFields.Add(field);
     }
-    
+
     void add()
     {
         var cls = new ClassData();
@@ -200,18 +204,19 @@ public class ClassField
 
         var assembly = Assembly.Load("Assembly-CSharp");
         Type type = assembly.GetType(ListItemType);
-        ProcFields(cls,type);
-        ProcSubClasses(cls,type);
-        
+        ProcFields(cls, type);
+        ProcSubClasses(cls, type);
+
         classes.Add(cls);
     }
-    
+
     string ComponentStr()
     {
         var typeArr = ClassType.Split('.');
         var type = typeArr[typeArr.Length - 1];
         return $"{type} is required";
     }
+
     public static Type GetType(string typeName)
     {
         var infoType = Type.GetType(typeName + ",Assembly-CSharp");
@@ -221,7 +226,7 @@ public class ClassField
             infoType = Type.GetType(typeName + ",UnityEngine.UI");
         return infoType;
     }
-    
+
     public static string GetAssemblyName(Assembly assembly)
     {
         if (assembly.ManifestModule.Name == "UnityEngine.UI.dll")
@@ -235,12 +240,12 @@ public class ClassField
         else
         {
             return ClassField.ASSAMBLE_SELF;
-        } 
+        }
     }
-    
-    void ProcFields(ClassData cls,Type type)
+
+    void ProcFields(ClassData cls, Type type)
     {
-        var arr = type.GetFields(BindingFlags.Instance | BindingFlags.Public); 
+        var arr = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
         List<FieldInfo> fields = new List<FieldInfo>();
         for (int i = 0; i < arr.Length; i++)
         {
@@ -283,7 +288,7 @@ public class ClassField
                 if (!string.IsNullOrEmpty(typeName))
                 {
                     field.ClassType = fields[i].FieldType.ToString();
-                    
+
                     var itemType = GetType(typeName);
                     var assembly = itemType.Assembly;
                     var assemblyName = GetAssemblyName(assembly);
@@ -300,7 +305,7 @@ public class ClassField
 
                     if (isArray)
                         field.ListType = ClassField.TYPE_ARRAY;
-                    if(isList)
+                    if (isList)
                         field.ListType = ClassField.TYPE_LIST;
                 }
             }
@@ -309,12 +314,12 @@ public class ClassField
                 field.ClassType = fields[i].FieldType.ToString();
                 field.ListType = ClassField.TYPE_NORMAL;
             }
-            
+
             cls.fields.Add(field);
         }
     }
 
-    void ProcSubClasses(ClassData cls,Type type)
+    void ProcSubClasses(ClassData cls, Type type)
     {
         var arr = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
         List<FieldInfo> fields = new List<FieldInfo>();
@@ -335,13 +340,13 @@ public class ClassField
             item.PropName = fields[i].Name;
             item.ClassName = fields[i].FieldType.ToString();
 
-            ProcFields(item,fields[i].FieldType);
-            ProcSubClasses(item,fields[i].FieldType);
-            
+            ProcFields(item, fields[i].FieldType);
+            ProcSubClasses(item, fields[i].FieldType);
+
             cls.classes.Add(item);
-        } 
+        }
     }
-    
+
     string GetListName()
     {
         var typeArr = ListItemType.Split('.');
@@ -351,9 +356,9 @@ public class ClassField
             var str = type.Replace("+", ".");
             return $"{PropName} (List<{str}>)";
         }
-        else if(ListType == TYPE_ARRAY)
+        else if (ListType == TYPE_ARRAY)
         {
-            var str = type.Replace("+",".") + "[]";
+            var str = type.Replace("+", ".") + "[]";
             return $"{PropName} ({str})";
         }
         else
@@ -361,7 +366,7 @@ public class ClassField
             return PropName;
         }
     }
-    
+
     bool ConditionUnityFieldArray()
     {
         return needUnityFields;
@@ -371,7 +376,7 @@ public class ClassField
     {
         return needClasses;
     }
-    
+
     bool ConditionColor()
     {
         return ClassType == typeof(Color).ToString();
@@ -389,7 +394,7 @@ public class ClassField
         clsField.component = component;
         clsField.boolVal = boolVal;
         clsField.colorVal = colorVal;
-        
+
         clsField.ListType = ListType;
         clsField.ListItemType = ListItemType;
         clsField.needUnityFields = needUnityFields;
@@ -414,29 +419,33 @@ public class ClassField
 
         return clsField;
     }
-    
+
     string GetName()
     {
         var typeArr = ClassType.Split('.');
         var type = typeArr[typeArr.Length - 1];
         return $"{PropName} ({type})";
     }
-    
+
     bool ComponentValid()
     {
+        if (needUnityFields || needClasses)
+            return false;
         if (component != null)
         {
             var type = Type.GetType(ClassType);
-            if(type == null)
-                type = Type.GetType(ClassType+",UnityEngine");
-            if(type == null)
-                type = Type.GetType(ClassType+",UnityEngine.UI");
+            if (type == null)
+                type = Type.GetType(ClassType + ",UnityEngine");
+            if (type == null)
+                type = Type.GetType(ClassType + ",UnityEngine.UI");
             if (type == null)
                 return false;
             return component.gameObject.GetComponent(type) != null;
         }
+
         return true;
     }
+
     public static HashSet<Type> PrimitiveTypes = new HashSet<Type>()
     {
         typeof(string), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong),
@@ -444,6 +453,7 @@ public class ClassField
     };
 
     private static HashSet<string> PrimitiveTypesStr;
+
     public static bool IsPrimitiveType(string clsType)
     {
         if (PrimitiveTypesStr == null)
@@ -457,7 +467,7 @@ public class ClassField
 
         return PrimitiveTypesStr.Contains(clsType);
     }
- 
+
     bool ConditionVal()
     {
         return IsPrimitiveType(ClassType);
@@ -471,10 +481,10 @@ public class ClassField
     bool ConditionComponent()
     {
         var type = Type.GetType(ClassType);
-        if(type == null)
-            type = Type.GetType(ClassType+",UnityEngine");
-        if(type == null)
-            type = Type.GetType(ClassType+",UnityEngine.UI");
+        if (type == null)
+            type = Type.GetType(ClassType + ",UnityEngine");
+        if (type == null)
+            type = Type.GetType(ClassType + ",UnityEngine.UI");
         if (type == null)
             return false;
         return type.IsSubclassOf(typeof(Component));
@@ -485,4 +495,3 @@ public class ClassField
         return ClassType == typeof(bool).ToString();
     }
 }
-
