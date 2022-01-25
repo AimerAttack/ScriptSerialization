@@ -86,7 +86,8 @@ namespace DefaultNamespace
                                     arr.SetValue(item.obj,j);
                                 else
                                 {
-                                    arr.SetValue(item.component, j);
+                                      var script = item.component.GetComponent(infoType);
+                                                                        arr.SetValue(script, j);
                                 }
                             }
 

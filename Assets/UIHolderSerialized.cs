@@ -84,17 +84,17 @@ public class ClassData
             var arr = ClassName.Split('+');
             if (arr.Length > 1)
             {
-                if(string.IsNullOrEmpty(PropName))
-                    return arr[arr.Length - 1];    
+                if (string.IsNullOrEmpty(PropName))
+                    return arr[arr.Length - 1];
                 return $"{PropName}({arr[arr.Length - 1]})";
             }
             else
             {
                 arr = ClassName.Split('.');
                 if (arr.Length > 1)
-                    if(string.IsNullOrEmpty(PropName))
-                        return arr[arr.Length - 1];    
-                    return $"{PropName}({arr[arr.Length - 1]})";
+                    if (string.IsNullOrEmpty(PropName))
+                        return arr[arr.Length - 1];
+                return $"{PropName}({arr[arr.Length - 1]})";
             }
         }
 
