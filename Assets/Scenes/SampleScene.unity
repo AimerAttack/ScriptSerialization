@@ -180,65 +180,26 @@ PrefabInstance:
       value: GameObject
       objectReference: {fileID: 0}
     - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].Name
-      value: ddd
+      propertyPath: ClassData.fields.Array.data[1].unityFields.Array.data[0].obj
+      value: 
+      objectReference: {fileID: 2781172865241160481}
+    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
+      propertyPath: ClassData.fields.Array.data[1].unityFields.Array.data[1].obj
+      value: 
+      objectReference: {fileID: 2781172865241160481}
+    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
+      propertyPath: ClassData.fields.Array.data[1].classes.Array.data[0].fields.Array.data[0].AssemblyType
+      value: Self
       objectReference: {fileID: 0}
     - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].ClassType
-      value: DefaultNamespace.MainUI+C4[]
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].needClasses
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].ListItemType
-      value: DefaultNamespace.MainUI+C4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].classes.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].needPrimitiveField
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].PrimitiveFields.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].classes.Array.data[0].propName
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].classes.Array.data[0].ClassName
-      value: DefaultNamespace.MainUI+C4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].PrimitiveFields.Array.data[0].ListType
-      value: TYPE_NORMAL
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].classes.Array.data[0].fields.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].classes.Array.data[0].fields.Array.data[0].val
-      value: 32
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].classes.Array.data[0].fields.Array.data[0].Name
-      value: c_4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].classes.Array.data[0].fields.Array.data[0].ListType
-      value: TYPE_NORMAL
-      objectReference: {fileID: 0}
-    - target: {fileID: 7873708324450352283, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
-      propertyPath: ClassData.fields.Array.data[0].classes.Array.data[0].fields.Array.data[0].ClassType
-      value: System.Int32
+      propertyPath: ClassData.fields.Array.data[1].classes.Array.data[1].fields.Array.data[0].AssemblyType
+      value: Self
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
+--- !u!1 &2781172865241160481 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7444835446359872886, guid: b42058c15f64340f4b1ed041b83439b5, type: 3}
+  m_PrefabInstance: {fileID: 2781172865241160480}
+  m_PrefabAsset: {fileID: 0}
